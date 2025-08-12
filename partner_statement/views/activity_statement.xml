@@ -161,9 +161,14 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-set="d" t-value="data.get(o.id)" />
+                <!-- 
+                Validar que o.lang sea válido antes de pasarlo al template.
+                Si o.lang es None o inválido, usar el lang del contexto o 'es_UY' como fallback.
+                -->
+                <t t-set="valid_lang" t-value="o.lang or context.get('lang') or 'es_UY'" />
                 <t
                     t-call="partner_statement.activity_statement_document"
-                    t-lang="o.lang"
+                    t-lang="valid_lang"
                 />
             </t>
         </t>

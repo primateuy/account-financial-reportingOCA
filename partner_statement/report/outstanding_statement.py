@@ -171,6 +171,16 @@ class OutstandingStatement(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
+        """
+        Obtiene los valores para el reporte, asegurando que get_title esté disponible.
+        
+        Args:
+            docids: IDs de los documentos (partners)
+            data: Datos adicionales del reporte
+            
+        Returns:
+            dict: Valores del reporte incluyendo get_title
+        """
         if not data:
             data = {}
         if "company_id" not in data:
@@ -179,4 +189,12 @@ class OutstandingStatement(models.AbstractModel):
             )
             data.update(wiz.create({})._prepare_statement())
         data["amount_field"] = "open_amount"
-        return super()._get_report_values(docids, data)
+        
+        # Obtener valores del reporte base
+        report_values = super()._get_report_values(docids, data)
+        
+        # Asegurar que get_title esté disponible en el contexto
+        if "get_title" not in report_values or report_values["get_title"] is None:
+            report_values["get_title"] = self._get_title
+            
+        return report_values
